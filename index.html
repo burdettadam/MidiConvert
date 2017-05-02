@@ -169,13 +169,64 @@
 			});
 		}
 
+    function roundTo(n, digits) {
+      if (digits === undefined) {
+        digits = 0;
+      }
+
+      var multiplicator = Math.pow(10, digits);
+      n = parseFloat((n * multiplicator).toFixed(11));
+      var test =(Math.round(n) / multiplicator);
+      return +(test.toFixed(digits));
+    }
+
 		function parseFile(file){
 			//read the file
 			var reader = new FileReader();
 			reader.onload = function(e){
-				
+
 				var partsData = MidiConvert.parse(e.target.result);
-				document.querySelector("#ResultsText").value = JSON.stringify(partsData, undefined, 2);
+				console.log("parsedData",partsData.tracks[0].notes);
+				var barsLegth = roundTo(partsData.tracks[0].notes[0].duration,4);
+        console.log("barsLegth",barsLegth);
+        var bars = roundTo(partsData.tracks[0].duration/roundTo(partsData.tracks[0].notes[0].duration,4),0);
+        console.log("bars",bars);
+        var notesArray = [];
+        var emptyNotes = [];
+        var notesMap = {};
+      //  for(var i = 0 ; i < bars; i++){
+      //      notesMap[(barsLegth*i)] = [];
+      //  }
+        for (var i=0 ;  i < partsData.tracks[0].notes.length; i++){
+          notesMap[partsData.tracks[0].notes[i].time]=[];
+        }
+				for (var i=0 ;  i < partsData.tracks[0].notes.length; i++){
+          notesMap[partsData.tracks[0].notes[i].time].push(partsData.tracks[0].notes[i].name);
+        }
+        var keys = Object.keys(notesMap),
+          i, len = keys.length;
+        keys.sort(function(a, b){return a-b});
+        console.log("keys",keys);
+        len = keys.length;
+
+        for (i = 0; i < len; i++) {
+          k = keys[i];
+          notesArray[i] = notesMap[k];
+          if(i+1 < len){
+              if( keys[i+1] - k > barsLegth ){
+                  emptyNotes.push([i,((keys[i+1] - k)/barsLegth)-1]);
+              }
+          }
+        }
+
+        for (i = emptyNotes.length -1 ; i >= 0; i--) {
+            for (var em = 0; em < emptyNotes[i][1]; em ++){
+              notesArray.splice(emptyNotes[i][0]+1, 0, ["R"]);// add empty notes
+            }
+        }
+
+        console.log("krlJson",notesMap);
+				document.querySelector("#ResultsText").value = JSON.stringify(notesArray);
 			};
 			reader.readAsBinaryString(file);
 		}
