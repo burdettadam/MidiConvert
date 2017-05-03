@@ -186,10 +186,18 @@
 			reader.onload = function(e){
 
 				var partsData = MidiConvert.parse(e.target.result);
+				var longestDuration = 0;
+				var notesDuration = 0;
+				for (var i=0; i < partsData.tracks.length; i++) {
+					if (notesDuration < partsData.tracks[i].notes[0].duration)
+						notesDuration = partsData.tracks[i].notes[0].duration;
+					if (longestDuration < partsData.tracks[i].duration)
+						longestDuration = partsData.tracks[i].duration;
+				}
 				console.log("parsedData",partsData.tracks[0].notes);
-				var barsLegth = roundTo(partsData.tracks[0].notes[0].duration,4);
+				var barsLegth = roundTo(notesDuration,4);
         console.log("barsLegth",barsLegth);
-        var bars = roundTo(partsData.tracks[0].duration/roundTo(partsData.tracks[0].notes[0].duration,4),0);
+        var bars = roundTo(longestDuration/roundTo(notesDuration,4),0);
         console.log("bars",bars);
         var notesArray = [];
         var emptyNotes = [];
@@ -197,12 +205,17 @@
       //  for(var i = 0 ; i < bars; i++){
       //      notesMap[(barsLegth*i)] = [];
       //  }
-        for (var i=0 ;  i < partsData.tracks[0].notes.length; i++){
-          notesMap[partsData.tracks[0].notes[i].time]=[];
+        for (var j=0; j < partsData.tracks.length; j++) {
+          for (var i=0 ;  i < partsData.tracks[j].notes.length; i++){
+            notesMap[Math.round(partsData.tracks[j].notes[i].time * 16)/16]=[];
+          }
         }
-				for (var i=0 ;  i < partsData.tracks[0].notes.length; i++){
-          notesMap[partsData.tracks[0].notes[i].time].push(partsData.tracks[0].notes[i].name);
-        }
+        for (var j=0; j < partsData.tracks.length; j++) {
+		  for (var i=0 ;  i < partsData.tracks[j].notes.length; i++){
+		  	if (!notesMap[Math.round(partsData.tracks[j].notes[i].time * 16)/16].includes(partsData.tracks[j].notes[i].name))
+              notesMap[Math.round(partsData.tracks[j].notes[i].time * 16)/16].push(partsData.tracks[j].notes[i].name);
+          }
+        }  
         var keys = Object.keys(notesMap),
           i, len = keys.length;
         keys.sort(function(a, b){return a-b});

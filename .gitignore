@@ -8,3 +8,14 @@ TODO.txt
 **.js.map
 
 .idea/**
+_site/build/MidiConvert.js
+*.js
+_site/test/midi/bwv-846.mid
+*.mid
+*.json
+_site/examples/load.html
+_site/src/MidiConvert.d.ts
+_site/LICENSE.md
+_site/index.html
+_site/README.md
+_site/yarn.lock
