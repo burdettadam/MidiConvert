@@ -207,13 +207,13 @@
       //  }
         for (var j=0; j < partsData.tracks.length; j++) {
           for (var i=0 ;  i < partsData.tracks[j].notes.length; i++){
-            notesMap[Math.round(partsData.tracks[j].notes[i].time * 16)/16]=[];
+            notesMap[partsData.tracks[j].notes[i].time]=[];
           }
         }
         for (var j=0; j < partsData.tracks.length; j++) {
 		  for (var i=0 ;  i < partsData.tracks[j].notes.length; i++){
-		  	if (!notesMap[Math.round(partsData.tracks[j].notes[i].time * 16)/16].includes(partsData.tracks[j].notes[i].name))
-              notesMap[Math.round(partsData.tracks[j].notes[i].time * 16)/16].push(partsData.tracks[j].notes[i].name);
+		  	if (!notesMap[partsData.tracks[j].notes[i].time].includes(partsData.tracks[j].notes[i].name))
+              notesMap[partsData.tracks[j].notes[i].time].push(partsData.tracks[j].notes[i].name);
           }
         }  
         var keys = Object.keys(notesMap),
