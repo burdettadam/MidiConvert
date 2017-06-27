@@ -186,11 +186,12 @@
 			reader.onload = function(e){
 
 				var partsData = MidiConvert.parse(e.target.result);
+				console.log("parsed data",partsData);
 				var longestDuration = 0;
 				var notesDuration = 0;
 				for (var i=0; i < partsData.tracks.length; i++) {
-					if (notesDuration < partsData.tracks[i].notes[0].duration)
-						notesDuration = partsData.tracks[i].notes[0].duration;
+					if (notesDuration < partsData.tracks[i].duration)
+						notesDuration = partsData.tracks[i].duration;
 					if (longestDuration < partsData.tracks[i].duration)
 						longestDuration = partsData.tracks[i].duration;
 				}
